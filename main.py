@@ -1,17 +1,20 @@
 # imports
 import random, os
-
+import discord
+import shelve
 from discord.ext import commands
 from discord.ext.commands import Bot
 
 from dummy_web import keep_alive
+
+
 
 #import youtube_dl
 #import topic_questions.py
 
 bot_token = os.getenv("TOKEN")
 client = commands.Bot(command_prefix = '.')
-
+#lient.remove_command("help")
 # events
 @client.event
 async def on_ready():
@@ -26,16 +29,53 @@ async def on_member_remove(member):
     print(f'{member} has left the server')
 
 # commands
+client.remove_command("help")
+
+
+## There was a space between @ and client on the next line
+@client.command()
+async def commands(ctx):
+  author = ctx.message.author
+  embed = discord.Embed(
+    colour = discord.Colour.red()
+  )
+  # title embed here saying Commands
+  embed.set_author(name='Commands')
+  embed.add_field(name= '.ping', value= 'Sends back pong , have fun laying table tennis uwu!', inline=False)
+  embed.add_field(name= '.Godie', value= 'to let ur anger out ;)', inline=False)
+  embed.add_field(name= '.avatar @mention', value= 'shows the avatar of the person you have mentioned', inline=False)
+  embed.add_field(name= '.topic shrimp', value= 'gives you a random question to start ur conversation or just answer!', inline=False)
+  embed.add_field(name= '.kick', value= """this kicks members from your server, you can type a reason next to .kick @mention [reason].
+  
+  Warning: this command only works if Shrimp_bot has permissions to kick and ban and you yourself do as well! """, inline=False)
+  embed.add_field(name= '.ban', value= """this bans members from your server, you can type a reason next to .ban @mention [reason].
+  
+  Warning: this command only works if Shrimp_bot has permissions to kick and ban and you yourself do as well! """, inline=False)
+
+  await ctx.send(embed=embed)
+
+
 
 @client.command()
 async def ping(ctx):
     await ctx.send('Pong!')
+
+
+
 @client.command()
 async def Godie(ctx):
     await ctx.send('oki ):')
-#@client.command()
-#async def topic(ctx):
-#    await ctx.send
+
+
+@client.command()
+async def avatar(ctx, member: discord.Member):
+  show_avatar = discord.Embed(
+    colour = discord.Color.purple()
+  )
+  show_avatar.set_image(url='{}'.format(member.avatar_url))
+  await ctx.send(embed=show_avatar)
+  # if no mention 
+  #await ctx.send (embed=show_avatar of current member)
 
 #@client.command()
 #async def Hangman(ctx):
@@ -99,6 +139,8 @@ async def topic(ctx,*,question):
                     'Watch sports or play sports?',
                     'Play dodgeball or kickball?',]           
     await ctx.send(f'Question: {random.choice(question)}')
+
+
 @client.command(pass_context=True)
 async def join(ctx):
     channel = ctx.message.author.voice.voice_channel
@@ -143,6 +185,40 @@ class Survey(object):
     
 bot_survey_memory = Survey()    
 
+@client.command()
+async def survey(ctx):
+    #bot_survey_memory.start_survey(ctx.message.author)
+    #await ctx.send(bot_survey_memory.next_question())
+    #await ctx.send('Use the command: .answer to send back your answer.')
+    
+    # Create the embed
+    # survey_embed = discord.Embed(title="Profile", 
+    #                              description="This is the details you have provided in the survey", 
+    #                              color=0x3615c4)
+    # add user's name and avatar
+    # import shelve
+    # db = shelve.open('test_store.db')
+    # record = db[ctx.message.author]
+                                  #  r, icon_url="https://cdn.statically.io/gh/connectedblue/pylearn/0d90038e/images/hangman.png")
+
+    # survey_embed.add_field(name="Age", value="14", inline=False)
+
+    
+    # survey_embed.add_field(name="Location", value="Shrimp town", inline=True)
+    
+    # # send the embed back to the user
+    #await ctx.send(embed=survey_embed)
+    
+    
+    db = shelve.open('test_store.db')
+    
+    user = str(ctx.message.author)
+    record = db[user]
+    age = record['Age']
+
+    await ctx.send(f"Hello {user} you are {age} years old")
+
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -157,18 +233,21 @@ async def on_message(message):
     await client.process_commands(message)
 
 
-@client.command()
-async def survey(ctx):
-    bot_survey_memory.start_survey(ctx.message.author)
-    await ctx.send(bot_survey_memory.next_question())
-    await ctx.send('Use the command: .answer to send back your answer.')
 
 @client.command()
 async def answer(ctx,user_answer):
     await ctx.send(f'You answer is: {user_answer}')
     await ctx.send(bot_survey_memory.next_question())
 
+#kick and ban user
 
+@client.command()
+async def kick(ctx, member : discord.Member, *, reason = None):
+  await member.kick(reason=reason)
+
+@client.command()
+async def ban(ctx, member : discord.Member, *, reason = None):
+  await member.ban(reason=reason)
 
 
 keep_alive()
