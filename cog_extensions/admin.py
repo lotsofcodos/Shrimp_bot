@@ -6,20 +6,16 @@ class admin(commands.Cog):
   def __init__(self, client):
     self.client = client
 
-  @commands.event()
-  async def on_ready(self):
-      print("bot is ready")
 
-
-  @commands.event()
-  async def on_member_join(self,member):
-      print(f'{member} has joined the server')
+  # @commands.event
+  # async def on_member_join(self,member):
+  #     print(f'{member} has joined the server')
 
 
 
-  @commands.event()
-  async def on_member_remove(self,member):
-      print(f'{member} has left the server')
+  # @commands.event
+  # async def on_member_remove(self,member):
+  #     print(f'{member} has left the server')
 
 
   @commands.command(pass_context=True)
@@ -27,20 +23,21 @@ class admin(commands.Cog):
       channel = ctx.message.author.voice.voice_channel
       await commands.join_voice_channel(channel)
 
-    @commands.command(pass_context = True)
-      async def leave(self,ctx):
-      """this makes shrimp_bot leave the voice channel"""
-        server = ctx.message.server
-        voice_client = commands.voice_client_in(server)
-        await voice_client.disconnect()
+  @commands.command(pass_context = True)
+  async def leave(self,ctx):
+    """this makes shrimp_bot leave the voice channel"""
+    server = ctx.message.server
+    voice_client = commands.voice_client_in(server)
+    await voice_client.disconnect()
 
-  @commands.command(pass_context =True)
-  async def purge(ctx,amount=10):
-      channel = ctx.message.channel
-      messages = []
-      async for message in commands.logs_from.channel, limit==int(amount):
-          messages.append(message)
-      await client.delete_messages(messages)
+  # @commands.command(pass_context =True)
+  # async def purge(self,ctx,amount=10):
+  #     """bulk delete 10 messages from above"""
+  #     channel = ctx.message.channel
+  #     messages = []
+  #     await for message in self.client.logs_from(channel, limit=amount):
+  #         messages.append(message)
+  #     await client.delete_messages(messages)
 
 
 
