@@ -27,8 +27,7 @@ class GameCog(commands.Cog):
     help_commands = self.__help_commands()
     if message.content in help_commands:
       response = getattr(self, help_commands[message.content])(message, state)
-      if response is not None:
-        await message.channel.send(dedent(response))
+      await self.send_response(message.channel,response)
       return
     
     if not message.content.startswith('.'):
@@ -45,10 +44,17 @@ class GameCog(commands.Cog):
         response = self.do_next_game_action(message, state)
         if len(response)==2:
           if response[0]:
-            await message.channel.send(dedent(response[1]))
+            await self.send_response(message.channel,response[1])
           break
-        if response is not None:
-          await message.channel.send(dedent(response))
+        await self.send_response(message.channel,response)
+
+  @staticmethod
+  async def send_response(channel,response):
+    if response is None: return
+    if isinstance(response, discord.Embed):
+      await channel.send(embed=response)
+    else:
+      await channel.send(dedent(response))
 
 
   def __help_commands(self):
@@ -59,9 +65,14 @@ class GameCog(commands.Cog):
   def help(self, message, state):
     """Shows this help message"""
     response = f'In game help for {state.game}:\n\n'
-    for cmd, func in self.__help_commands().items():
-      response += f"{cmd}\t\t\t{getattr(self,func).__doc__}\n"
+    
+    commands = self.__help_commands()
+    width = max([len(c) for c in commands.keys()]) +2
+    fmt = "{{cmd:{width}}}{{help}}\n".format(width=width)
+    for cmd, func in commands.items():
+      response += fmt.format(cmd=cmd,help=getattr(self,func).__doc__)
 
+    response = "```" + response + "```"
     return response
 
   def quit(self, message, state):
