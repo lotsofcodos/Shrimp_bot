@@ -28,12 +28,12 @@ class BotFactory(object):
     async def load(ctx, ext):
       """Load custom extension"""
       bot.load_extension(self.extension_path(ext))
-    
+      await message.say ("the extension has loaded!")
     @bot.command()
     async def unload(ctx, ext):
       """Unload custom extension"""
       bot.unload_extension(self.extension_path(ext))
-
+      await message.say ("the extension has unloaded!")
     @bot.command()
     async def reload(ctx, ext):
       """Reload custom extension"""

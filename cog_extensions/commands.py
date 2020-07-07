@@ -30,6 +30,8 @@ class commands(commands.Cog):
     
     Warning: this command only works if Shrimp_bot has permissions to kick and ban and you yourself do as well! """, inline=False)
     embed.add_field(name= '.commands', value= 'shows this command', inline=False)
+    embed.add_field(name= '.mathsfun', value= """this plays a maths game (you can use [!help] once playing for help with the game) """,
+     inline=False)
 
 
     await ctx.send(embed=embed)
