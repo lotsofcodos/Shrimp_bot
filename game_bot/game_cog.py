@@ -24,12 +24,15 @@ class GameCog(commands.Cog):
     if state is None:
       return
     
+    # In game help commands processed first
     help_commands = self.__help_commands()
     if message.content in help_commands:
       response = getattr(self, help_commands[message.content])(message, state)
       await self.send_response(message.channel,response)
       return
     
+    # if it's not a bot command, treat the message as part of the
+    # gameflow
     if not message.content.startswith('.'):
       state.current_turn += 1
       await self.execute_game_flow(message, state)
@@ -37,15 +40,28 @@ class GameCog(commands.Cog):
   async def execute_game_flow(self, message, state):
       loop_count = 0
       while True:
+        # Make sure we don't loop forever
         loop_count +=1
         if loop_count>50:
           raise RunTimeError('Logic is not exiting - check flow')
           break
+
+        # The next state is a method name on this object
         response = self.do_next_game_action(message, state)
-        if len(response)==2:
+        
+        # Stop executing loop when the response from the
+        # next game action is a tuple of
+        # the form (True/False, message).  Send the message if
+        # true but break anyway.
+        # Two ways a flow can end:
+        #    either a function is decorated with @wait_for_player_response
+        #    or, an end state is specified (end() defined below)
+        if isinstance(response, tuple) and len(response)==2:
           if response[0]:
             await self.send_response(message.channel,response[1])
           break
+        
+        # Otherwise just send the response and stay in loop
         await self.send_response(message.channel,response)
 
   @staticmethod
@@ -53,9 +69,47 @@ class GameCog(commands.Cog):
     if response is None: return
     if isinstance(response, discord.Embed):
       await channel.send(embed=response)
+    elif isinstance(response, dict):
+      await channel.send(**response)
     else:
       await channel.send(dedent(response))
 
+  @staticmethod
+  def disappearing_response(content, delete_after):
+    if isinstance(content, discord.Embed):
+      response = {'embed': content}
+    else:
+      response = {'content': content}
+    response['delete_after'] = delete_after
+
+    return response
+
+  @staticmethod
+  def make_embed(title='', description='', colour=0x3615c4,
+                 author=None, icon=None, thumbnail=None, footer=None,
+                 fields=None):
+
+    embed=discord.Embed(title=title, description=description, color=colour)
+
+    author_params = {}
+    if author is not None:
+      author_params['name'] = author
+    if icon is not None:
+      author_params['icon_url'] = icon
+    if len(author_params)>0:
+      embed.set_author(**author_params)
+
+    if thumbnail is not None:
+      embed.set_thumbnail(url=icon)
+    
+    if fields is not None:
+      for f in fields:
+        embed.add_field(**f)
+    
+    if footer is not None:
+      embed.set_footer(text=footer)
+    
+    return embed
 
   def __help_commands(self):
     return {self.game_command_prefix+c:c for c in\
@@ -117,8 +171,8 @@ class GameCog(commands.Cog):
     """Shows any games in progress"""
     games = self.users.get_all_games(ctx.message.author.id)
 
-    if games is None:
-      await ctx.send(f'No games in progress for {ctx.message.author}')
+    if games is None or games == []:
+      await ctx.send(f'No games in progress for {ctx.message.author.name}')
       return
     
     active = [g.game for g in games if g.active]
@@ -129,7 +183,7 @@ class GameCog(commands.Cog):
 
     active = [g.game for g in games if g.active]
     inactive = ', '.join([g.game for g in games if not g.active])
-    response = f'Paused Games for {ctx.message.author}: {inactive}'
+    response = f'Paused Games for {ctx.message.author.name}: {inactive}'
     if len(active)==1:
       if response != '': response += ' and '
       response += f'game {active[0]} is currently active'

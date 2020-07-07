@@ -1,5 +1,4 @@
 import random
-from textwrap import dedent
 from discord.ext import commands
 from game_bot import start_game, wait_for_player_response
 
@@ -23,25 +22,25 @@ class MathsGame(object):
 
   @commands.group(invoke_without_command=True)
   @start_game(game_flow = maths_game_flow)
-  async def mathsfun(self,ctx, state=None):
+  def mathsfun(self,message, state=None):
     """Maths quiz"""
     self.custom_game_help = ['clue']
     state.current_state = 'start'
 
     if state.new_game == True:
       response = f"""
-                  Welcome to some maths questions {ctx.message.author.name}!
+                  Welcome to some maths questions {message.author.name}!
                   I'll ask you five questions and give your score at the end
                   """
       state.question = 0
     else:
       response = f"""
-                  Welcome back {ctx.message.author.name}!
+                  Welcome back {message.author.name}!
                   Your score is {state.score} and this is question {state.question}
                   """
       state.question = state.question - 1
     
-    await ctx.send(dedent(response))
+    return response
 
   @wait_for_player_response
   def ask_maths_question(self, message, state):

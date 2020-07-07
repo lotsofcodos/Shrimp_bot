@@ -14,6 +14,7 @@ game_flow = {
 async def start_game(f, initial_state='start', game_flow=game_flow, *args, **kwargs):
   self = args[0]
   ctx = args[1]
+  message = ctx.message
   self.game_flow[f.__name__] = game_flow
   state, paused = self.users.start_game(ctx.message.author.id, f.__name__, initial_state)
   if len(paused)>0:
@@ -22,12 +23,13 @@ async def start_game(f, initial_state='start', game_flow=game_flow, *args, **kwa
   if state.new_game:
       await ctx.send(f'{f.__name__} started with {ctx.message.author}')
   else:
-    await ctx.send(f'{f.__name__} restarted with {ctx.message.author}.  Currently at turn {state.current_turn}')
+    await ctx.send(f'{f.__name__} restarted with {ctx.message.author}')
   
   # run the initial welcome or resume logic
   kwargs['state'] = state
-  _ = await f(self, ctx, state)
+  response = f(self,message, state)
   
+  await self.send_response(message.channel, response)
   # do the first action in the list
   state.new_game = False
   await self.execute_game_flow(ctx.message, state)
