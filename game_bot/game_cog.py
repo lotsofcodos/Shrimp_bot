@@ -8,8 +8,12 @@ class GameCog(commands.Cog):
 
   game_command_prefix = ''
 
-  built_in_game_help = ['help', 'pause', 'quit']
-  custom_game_help = []
+  built_in_game_help = {
+          'help': 'help',
+          'pause': 'pause', 
+          'quit': 'quit',
+  }
+  custom_game_help = {}
 
   def __init__(self, client):
     self.client = client
@@ -79,7 +83,7 @@ class GameCog(commands.Cog):
     if isinstance(content, discord.Embed):
       response = {'embed': content}
     else:
-      response = {'content': content}
+      response = {'content': dedent(content)}
     response['delete_after'] = delete_after
 
     return response
@@ -112,8 +116,11 @@ class GameCog(commands.Cog):
     return embed
 
   def __help_commands(self):
-    return {self.game_command_prefix+c:c for c in\
-                    self.built_in_game_help + self.custom_game_help}
+    builtin = {self.game_command_prefix+c:self.built_in_game_help[c] \
+                   for c in self.built_in_game_help.keys()}
+    builtin.update({self.game_command_prefix+c:self.custom_game_help[c] \
+                   for c in self.custom_game_help.keys()})
+    return builtin
 
   # Builtin game commands
   def help(self, message, state):
@@ -131,14 +138,14 @@ class GameCog(commands.Cog):
 
   def quit(self, message, state):
     """Stop playing"""
-    self.custom_game_help = []
+    self.custom_game_help = {}
     self.users.remove_game(state.user, state.game)
     return f'{message.author.name} no longer playing {state.game}'
 
   def pause(self, message, state):
     """Pause playing"""
     state.active = False
-    self.custom_game_help = []
+    self.custom_game_help = {}
     return f'{message.author.name} has paused the {state.game}.  Type .{state.game} to resume'
 
   def connect_to(self, message, state):

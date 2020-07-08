@@ -11,10 +11,15 @@ game_flow = {
 
 # @game_start decorator
 @decorator
-async def start_game(f, initial_state='start', game_flow=game_flow, *args, **kwargs):
+async def start_game(f, 
+                     initial_state='start', 
+                     game_flow=game_flow, 
+                     custom_help = {},
+                     *args, **kwargs):
   self = args[0]
   ctx = args[1]
   message = ctx.message
+  self.custom_game_help = custom_help
   self.game_flow[f.__name__] = game_flow
   state, paused = self.users.start_game(ctx.message.author.id, f.__name__, initial_state)
   if len(paused)>0:
