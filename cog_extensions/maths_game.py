@@ -18,13 +18,14 @@ maths_game_flow = {
                         ],
 }
 
+maths_custom_help = {'clue': 'maths_clue'}
+
 class MathsGame(object):
 
   @commands.group(invoke_without_command=True)
-  @start_game(game_flow = maths_game_flow)
+  @start_game(game_flow = maths_game_flow, custom_help = maths_custom_help)
   def mathsfun(self,message, state=None):
     """Maths quiz"""
-    self.custom_game_help = ['clue']
     state.current_state = 'start'
 
     if state.new_game == True:
@@ -69,7 +70,7 @@ class MathsGame(object):
     response = f"Game over.  You scored {state.score}" 
     return response
 
-  def clue(self, message, state):
+  def maths_clue(self, message, state):
     """Gives a range for the answer"""
     answer = state.number1 + state.number2
     neg = random.randint(1,5)

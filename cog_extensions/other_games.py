@@ -14,28 +14,18 @@ vanish_game_flow = {
               ],
   }
 
-fruit_game_flow = {
-    'start': [
-              ('connect_to', 'embed_test'),
-              ],
-    'embed_test': [
-              ('connect_to', 'disappear'),
-              ],
-    'disappear': [
-              ('connect_to', 'end'),
-              ],
-  }
 
+hangman_image = "https://cdn.statically.io/gh/connectedblue/pylearn/0d90038e/images/hangman.png"
+hangman_template = {
+  'title': 'Hangman', 
+  'description': 'Play hangman with me',
+  'colour': 0x3615c4,
+  'icon': hangman_image,
+  'footer': "(c) 2020",
+}
 
 
 class OtherGames(object):
-
-  @commands.group(invoke_without_command=True)
-  @start_game(game_flow = fruit_game_flow)
-  def fruit(self,message, state=None):
-    """Game number 2"""
-    return None
-
   
   @commands.group(invoke_without_command=True)
   @start_game(game_flow = vanish_game_flow)
@@ -44,13 +34,9 @@ class OtherGames(object):
     return None
 
   def embed_test(self, message, state):
-    embed = self.make_embed(title='Hangman', 
-                            description='Play hangman with me',
-                            colour=0x3615c4,
+    embed = self.make_embed(**hangman_template,
                             author=message.author.name,
-                            icon="https://cdn.statically.io/gh/connectedblue/pylearn/0d90038e/images/hangman.png",
-                            thumbnail="https://cdn.statically.io/gh/connectedblue/pylearn/0d90038e/images/hangman.png",
-                            footer = "(c) 2020",
+                            thumbnail=hangman_image,
             fields=[
               {
                   'name': "last letter guessed", 
