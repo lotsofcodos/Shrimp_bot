@@ -8,11 +8,11 @@ hangman_game_flow = {
                     ('connect_to', 'ask_level'),
                   ],
 'ask_level': [
-                    ('connect_to', 'fruit_display_timer'),
+                    ('connect_to', 'is_level_valid'),
                   ],
-'fruit_display_timer': [
-                    ('is_timer_active', 'fruit_display_timer'),
-                    ('connect_to', 'check_guess'),
+'is_level_valid': [
+                    ('is_level_valid', 'game_setup'),
+                    ('connect_to', 'ask_level'),
                   ],
 'check_guess':    [
                     ('has_game_finished', 'show_score'),
@@ -42,8 +42,8 @@ class HangmanGame(object):
               Welcome to the Hangman {message.author.name}!
               You can use !help during the game for ingame help and advisement.
               """
-             
     state.score = 0
+    state.level= None
     state.current_go = 1
     #state.number_of_goes_allowed = 6
     state.letters_guessed = []
@@ -51,10 +51,26 @@ class HangmanGame(object):
 
   @wait_for_player_response
   def ask_level(self,message, state):
-    response = "Which level do you want? 1, 2 or 3? "
+    response = "Which level do you want? 1, 2 or 3? " 
 
     return response
+
+  def is_level_valid(self,message,state):
+    # player has just entered their level
+    state.level = message.content
+    # make a decision if it's valid
+    if state.level in ['1','2','3']:
+      return True
+    else:
+      self.send_response(message.channel, f"The level input that you have typed is invalid. You inpute was {state.level} Retype a valid response.")
+      return False
     
+
+
+    
+
+  def game_setup(self, message, state):
+    pass
 
   def show_fruitbowl(self, message, state):
     response = '  '.join([':'+f+':' for f in state.fruit])
