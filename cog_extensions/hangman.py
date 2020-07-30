@@ -12,6 +12,9 @@ hangman_game_flow = {
                   ],
 'is_level_valid': [
                     ('is_level_valid', 'game_setup'),
+                    ('connect_to', 'wrong_level'),
+                  ],
+'wrong_level': [
                     ('connect_to', 'ask_level'),
                   ],
 'check_guess':    [
@@ -62,10 +65,10 @@ class HangmanGame(object):
     if state.level in ['1','2','3']:
       return True
     else:
-      self.send_response(message.channel, f"The level input that you have typed is invalid. You inpute was {state.level} Retype a valid response.")
       return False
     
-
+  def wrong_level(self, message,state):
+    return "The level input that you have typed is invalid."
 
     
 

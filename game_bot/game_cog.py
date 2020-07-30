@@ -70,7 +70,7 @@ class GameCog(commands.Cog):
 
   @staticmethod
   async def send_response(channel,response):
-    if response is None: return
+    if response in [None, True, False]: return
     if isinstance(response, discord.Embed):
       await channel.send(embed=response)
     elif isinstance(response, dict):
