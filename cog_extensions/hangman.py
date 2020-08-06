@@ -17,12 +17,11 @@ hangman_game_flow = {
 'wrong_level': [
                     ('connect_to', 'ask_level'),
                   ],
-'check_guess':    [
-                    ('has_game_finished', 'show_score'),
-                    ('connect_to', 'guess_again'),
+'game_setup':    [
+                    ('connect_to', 'show_placeholder'),
                   ],
-'guess_again':    [
-                    ('connect_to', 'check_guess'),
+'show_placeholder':    [
+                    ('connect_to', 'is_game_finished'),
                   ],
 'show_score':     [   
                     ('connect_to', 'end'),
@@ -48,7 +47,6 @@ class HangmanGame(object):
     state.score = 0
     state.level= None
     state.current_go = 1
-    #state.number_of_goes_allowed = 6
     state.letters_guessed = []
     return response
 
@@ -62,7 +60,7 @@ class HangmanGame(object):
     # player has just entered their level
     state.level = message.content
     # make a decision if it's valid
-    if state.level in ['1','2','3']:
+    if state.level in ["1","2","3"]:
       return True
     else:
       return False
@@ -73,7 +71,23 @@ class HangmanGame(object):
     
 
   def game_setup(self, message, state):
-    pass
+    if state.level == "1":
+      state.number_of_goes_allowed = 2
+      state.word_to_guess = "cool"
+    else:
+      state.number_of_goes_allowed = 3
+      state.word_to_guess = "droplet"
+      
+    state.placeholder= "-" *len(state.word_to_guess)
+
+    return f"you have {state.number_of_goes_allowed} guesses"
+
+  @wait_for_player_response
+  def show_placeholder(self,message,state):
+    return f""" the word you need to guess is {state.placeholder}
+    You currently on go {state.current_go} . 
+    Type your letter guess!"""
+
 
   def show_fruitbowl(self, message, state):
     response = '  '.join([':'+f+':' for f in state.fruit])
