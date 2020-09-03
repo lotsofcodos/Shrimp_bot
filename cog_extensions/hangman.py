@@ -56,6 +56,7 @@ class HangmanGame(object):
     state.level= None
     state.current_go = 1
     state.letters_guessed = []
+    state.guessed_correctly = False
     return response
 
   @wait_for_player_response
@@ -80,13 +81,14 @@ class HangmanGame(object):
 
   def game_setup(self, message, state):
     if state.level == "1":
-      state.number_of_goes_allowed = 2
+      state.number_of_goes_allowed = 7
       state.word_to_guess = "cool"
     else:
-      state.number_of_goes_allowed = 3
+      state.number_of_goes_allowed = 10
       state.word_to_guess = "droplet"
-      
-    state.placeholder= "-" *len(state.word_to_guess)
+    
+    state.word_to_guess = list(state.word_to_guess)
+    state.placeholder= list("-" *len(state.word_to_guess))
 
     return f"you have {state.number_of_goes_allowed} guesses"
 
@@ -95,11 +97,26 @@ class HangmanGame(object):
     response = f""" the word you need to guess is {state.placeholder}
     You currently on go {state.current_go} . 
     Type your letter guess!"""
+    state.current_go = state.current_go + 1
     return response
 
   def is_game_finished(self, message, state):
-    state.current_go = state.current_go + 1
-    if state.current_go == state.number_of_goes_allowed:
+    # Check each letter against the guess
+    # and if correct, update the placeholder
+    Guess = message.content
+    
+    index= 0
+    while index<len(state.word_to_guess):
+        if Guess == state.word_to_guess[index]:
+            state.placeholder[index] = Guess
+        index = index+1
+    
+    if state.word_to_guess == state.placeholder:
+      state.guessed_correctly = True
+      return True
+
+
+    if state.current_go > state.number_of_goes_allowed:
       print("current goes is equal to number of goes allowed")
       return True
     else:
@@ -107,4 +124,7 @@ class HangmanGame(object):
       return False
 
   def show_hangman_score(self, message, state):
-    return "You have finished game"
+    if state.guessed_correctly == True:
+      return f"You guessed the word: {state.word_to_guess}"
+    else:
+      return f"You have finished game and didn't manage to guess the whole word here is the word {state.word_to_guess}"
