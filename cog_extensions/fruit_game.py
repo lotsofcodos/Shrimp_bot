@@ -1,8 +1,7 @@
 import random
-import discord
 from discord.ext import commands
 from game_bot import start_game, wait_for_player_response
-
+# this flow structure connects funtions together
 fruit_game_flow = {
 'start':          [
                     ('connect_to', 'show_fruitbowl'),
@@ -143,6 +142,3 @@ class FruitGame(object):
     """Gives a hint about what the fruit might be"""
     state.score += -1
     return fruit_clues[random.choice(self.unguessed_fruit(state))]
-
-  
-  

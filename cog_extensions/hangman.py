@@ -2,6 +2,7 @@ import random
 import discord
 from discord.ext import commands
 from game_bot import start_game, wait_for_player_response
+from cog_extensions.word_list import words_with_length
 
 hangman_game_flow = {
 'start':          [
@@ -81,9 +82,41 @@ class HangmanGame(object):
 
   def game_setup(self, message, state):
     if state.level == "1":
-      state.number_of_goes_allowed = 7
-      state.word_to_guess = "cool"
+      state.number_of_goes_allowed = 20
+      
+      greater_than = 21
+      less_than = 19 
+      wordlist='./cog_extensions/words.txt'
+
+      count_repeated_letters = False
+      level_1_words = words_with_length(greater_than, less_than, count_repeated_letters, wordlist)
+      
+      state.word_to_guess = random.choice(level_1_words)
+    elif state.level == "2":
+      state.number_go_allowed = 15
+
+      greater_than = 16
+      less_than = 14
+      wordlist='./cog_extensions/words.txt'
+      count_repeated_letters = False
+      level_2_words = words_with_length(greater_than, less_than, count_repeated_letters, wordlist)
+      
+      state.word_to_guess = random.choice(level_2_words)
+    elif state.level == "3":
+      state.number_go_allowed = 9
+
+      greater_than = 10
+      less_than = 8
+      wordlist='./cog_extensions/words.txt'
+      count_repeated_letters = False
+      level_3_words = words_with_length(greater_than, less_than, count_repeated_letters, wordlist)
+      
+      state.word_to_guess = random.choice(level_3_words)
+
+     
+      
     else:
+
       state.number_of_goes_allowed = 10
       state.word_to_guess = "droplet"
     
@@ -104,7 +137,7 @@ class HangmanGame(object):
     # Check each letter against the guess
     # and if correct, update the placeholder
     Guess = message.content
-    
+    Guess = Guess.upper()
     index= 0
     while index<len(state.word_to_guess):
         if Guess == state.word_to_guess[index]:

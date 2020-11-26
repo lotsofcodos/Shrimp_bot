@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-
+#this a giabt embed that tell you the commands 
 class commands(commands.Cog):
 
 
@@ -53,3 +53,5 @@ class commands(commands.Cog):
     
 def setup(client):
   client.add_cog(commands(client))
+
+  

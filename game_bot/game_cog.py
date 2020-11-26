@@ -47,8 +47,7 @@ class GameCog(commands.Cog):
         # Make sure we don't loop forever
         loop_count +=1
         if loop_count>50:
-          raise RunTimeError('Logic is not exiting - check flow')
-          break
+          raise RuntimeError('Logic is not exiting - check flow')
 
         # The next state is a method name on this object
         response = self.do_next_game_action(message, state)

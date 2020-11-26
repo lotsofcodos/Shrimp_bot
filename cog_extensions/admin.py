@@ -29,7 +29,7 @@ class admin(commands.Cog):
     server = ctx.message.server
     voice_client = commands.voice_client_in(server)
     await voice_client.disconnect()
-
+# these join and unjoin the bot from a vouce channel
   # @commands.command(pass_context =True)
   # async def purge(self,ctx,amount=10):
   #     """bulk delete 10 messages from above"""
@@ -56,3 +56,4 @@ class admin(commands.Cog):
 
 def setup(client):
   client.add_cog(admin(client))
+  # this sets the extensions to the bot so you can load and unload abd reload from bot .. you can find that code in bot_factory

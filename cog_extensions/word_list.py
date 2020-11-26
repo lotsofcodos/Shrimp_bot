@@ -14,7 +14,7 @@ def words_with_length(greater_than, less_than, count_repeated_letters=True,
                                   the word
         wordlist               -- The text file where all the words are
     Output:
-        word_list    -- a list of words than meet the specification
+        word_list    -- a list of words than meet the   specification
                         all words are returned in upper case
     """
     # read all the words in first
