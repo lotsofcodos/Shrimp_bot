@@ -16,12 +16,12 @@ class BotFactory(object):
     async def on_ready():
       print('Logged on as {0}!'.format(bot.user))
 
-    @bot.event
-    async def on_message(message):
-      if message.author == bot.user:
-        return
-      print(f'{message.author}: {message.content} ')
-      await bot.process_commands(message)
+    # @bot.event
+    # async def on_message(message):
+    #   if message.author == bot.user:
+    #     return
+    #   print(f'{message.author}: {message.content} ')
+    #   await bot.process_commands(message)
 
   
     @bot.command()
