@@ -54,4 +54,3 @@ class OtherGames(object):
 
   def disappear(self, message, state):
     return self.disappearing_response("This will disappear soon", 10) 
-

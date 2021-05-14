@@ -9,8 +9,5 @@ from cog_extensions.hangman import HangmanGame
 # Add the new game classes onto the end of this list
 class Games(GameCog, MathsGame, OtherGames, FruitGame, HangmanGame):
   game_command_prefix = '!'
-  pass
-
 def setup(client):
   client.add_cog(Games(client))
-

@@ -143,19 +143,15 @@ class HangmanGame(object):
         if Guess == state.word_to_guess[index]:
             state.placeholder[index] = Guess
         index = index+1
-    
     if state.word_to_guess == state.placeholder:
       state.guessed_correctly = True
       return True
-
-
     if state.current_go > state.number_of_goes_allowed:
       print("current goes is equal to number of goes allowed")
       return True
     else:
       print("current goes is not equal to number of goes allowed")
       return False
-
   def show_hangman_score(self, message, state):
     if state.guessed_correctly == True:
       return f"You guessed the word: {state.word_to_guess}"

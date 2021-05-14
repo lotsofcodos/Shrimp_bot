@@ -37,6 +37,3 @@ class UserState(object):
       del self._users[user][game]
     except:
       raise KeyError(f'Cannot remove {game} for {user}')
-
-
-
