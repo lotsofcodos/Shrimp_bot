@@ -5,36 +5,32 @@ from game_bot import start_game, wait_for_player_response
 from cog_extensions.word_list import words_with_length
 
 hangman_game_flow = {
-'start':          [
-                    ('connect_to', 'ask_level'),
-                  ],
-'ask_level': [
-                    ('connect_to', 'is_level_valid'),
-                  ],
-'is_level_valid': [
-                    ('is_level_valid', 'game_setup'),
-                    ('connect_to', 'wrong_level'),
-                  ],
-'wrong_level': [
-                    ('connect_to', 'ask_level'),
-                  ],
-'game_setup':    [
-                    ('connect_to', 'show_placeholder'),
-                  ],
-'show_placeholder':    [
-                    ('connect_to', 'is_game_finished'),
-                  ],
-
-'is_game_finished': [
-                    ('is_game_finished', 'show_hangman_score'),
-                    ('connect_to', 'show_placeholder'),
-                  ],
-
-
-
-'show_hangman_score':     [   
-                    ('connect_to', 'end'),
-                  ],
+    'start': [
+        ('connect_to', 'ask_level'),
+    ],
+    'ask_level': [
+        ('connect_to', 'is_level_valid'),
+    ],
+    'is_level_valid': [
+        ('is_level_valid', 'game_setup'),
+        ('connect_to', 'wrong_level'),
+    ],
+    'wrong_level': [
+        ('connect_to', 'ask_level'),
+    ],
+    'game_setup': [
+        ('connect_to', 'show_placeholder'),
+    ],
+    'show_placeholder': [
+        ('connect_to', 'is_game_finished'),
+    ],
+    'is_game_finished': [
+        ('is_game_finished', 'show_hangman_score'),
+        ('connect_to', 'show_placeholder'),
+    ],
+    'show_hangman_score': [   
+        ('connect_to', 'end'),
+    ],
 }
 
 
